@@ -44,12 +44,15 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake>
         //Create an object of an earthquake
         Earthquake earthquake = getItem(position);
 
+        //Find the TextView with the view ID magnitude
         TextView earthquakeMagnitude = (TextView) listEarthquakeView.findViewById(R.id.magnitude);
         earthquakeMagnitude.setText(earthquake.getMagnitude());
 
+        //Find the TextView with the view ID location
         TextView earthquakeLocation = (TextView) listEarthquakeView.findViewById(R.id.location);
         earthquakeLocation.setText(earthquake.getLocation());
 
+        //Find the TextView with the view ID date
         TextView earthquakeDate = (TextView) listEarthquakeView.findViewById(R.id.date);
         earthquakeDate.setText(earthquake.getDate());
 
