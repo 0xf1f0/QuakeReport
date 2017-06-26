@@ -30,12 +30,10 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake>
         super(context, 0, earthquakes);
     }
 
-
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent)
     {
-//        return super.getView(position, convertView, parent);
         View listEarthquakeView = convertView;
 
         if(listEarthquakeView ==  null)
