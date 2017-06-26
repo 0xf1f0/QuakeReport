@@ -15,4 +15,7 @@
 -->
 <resources>
     <string name="app_name">Quake Report</string>
+    <string name="magnitude">7.2</string>
+    <string name="location">San Francisco</string>
+    <string name="date">Feb 2, 2016</string>
 </resources>
