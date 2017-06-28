@@ -12,6 +12,7 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 /**
  * Created by Lenovo on 6/25/2017.
@@ -20,6 +21,9 @@ import java.util.Date;
 
 public class EarthquakeAdapter extends ArrayAdapter<Earthquake>
 {
+
+    private static final String LOCATION_SEPARATOR = " of ";
+
     //Overloaded constructor
 
     /***
@@ -50,9 +54,32 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake>
         TextView earthquakeMagnitude = (TextView) listEarthquakeView.findViewById(R.id.magnitude);
         earthquakeMagnitude.setText(earthquake.getMagnitude());
 
-        //Find the TextView with the view ID location
-        TextView earthquakeLocation = (TextView) listEarthquakeView.findViewById(R.id.location);
-        earthquakeLocation.setText(earthquake.getLocation());
+        //Split the location into offset and primary locations
+        String location = earthquake.getLocation();
+        String offsetLocation;
+        String primaryLocation;
+
+        if (location.contains(LOCATION_SEPARATOR))
+        {
+            String[] parts = location.split(LOCATION_SEPARATOR);
+            offsetLocation = parts[0] + LOCATION_SEPARATOR;
+            primaryLocation = parts[1];
+        }
+        else
+        {
+            offsetLocation = "Near the";
+            primaryLocation = location;
+        }
+
+        //Find the TextView with the view ID offset_location
+        TextView earthquakeOffsetLocation = (TextView) listEarthquakeView.findViewById(R.id
+                .offset_location);
+        earthquakeOffsetLocation.setText(offsetLocation);
+
+        //Find the TextView with the view ID primary_location
+        TextView earthquakPrimaryLocation = (TextView) listEarthquakeView.findViewById(R.id
+                .primary_location);
+        earthquakPrimaryLocation.setText(primaryLocation);
 
         //Create a new Date object from the time in milliseconds of the earthquake
         Date dateObject = new Date(earthquake.getTimeInMilliseconds());
@@ -61,7 +88,7 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake>
         String formattedDate = formatDate(dateObject);
 
         //Format the time(ms) to display a readable time(i.e 4:30 PM)
-        String formattedTime =  formatTime(dateObject);
+        String formattedTime = formatTime(dateObject);
 
         //Find the TextView with the view ID date
         TextView earthquakeDate = (TextView) listEarthquakeView.findViewById(R.id.date);

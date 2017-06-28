@@ -16,7 +16,8 @@
 <resources>
     <string name="app_name">Quake Report</string>
     <string name="magnitude">7.2</string>
-    <string name="location">San Francisco</string>
+    <string name="offset_location">74Km NW of</string>
+    <string name="primary_location">Rumoi, Japan</string>
     <string name="date">Feb 2, 2016</string>
     <string name="time">4:00 PM</string>
 </resources>
