@@ -10,7 +10,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import static android.content.ContentValues.TAG;
 
@@ -202,10 +204,11 @@ public final class QueryUtils
                 //Create a JSONObject for properties
                 JSONObject properties = index.getJSONObject("properties");
 
-                String mag, place, time;
+                String mag, place;
+                long time;
                 mag = properties.getString("mag");
                 place = properties.getString("place");
-                time = properties.getString("time");
+                time = properties.getLong("time");
 
                 //Add the String values extracted to Earthquake ArrayList
                 earthquakes.add(new Earthquake(mag, place, time));
