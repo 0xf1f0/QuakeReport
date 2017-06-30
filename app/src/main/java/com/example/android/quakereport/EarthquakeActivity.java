@@ -47,7 +47,7 @@ public class EarthquakeActivity extends AppCompatActivity {
 
         final ArrayList<Earthquake> earthquakes = QueryUtils.extractEarthquakes();
         // Create a new {@link ArrayAdapter} of earthquakes
-        final EarthquakeAdapter adapter = new EarthquakeAdapter(this, earthquakes);
+        EarthquakeAdapter adapter = new EarthquakeAdapter(this, earthquakes);
 
         // Find a reference to the {@link ListView} in the layout
         ListView earthquakeListView = (ListView) findViewById(R.id.list);
@@ -63,11 +63,14 @@ public class EarthquakeActivity extends AppCompatActivity {
                 //Get the {@link earthquake } object at the given position(i) the user clicked on
                 Earthquake earthquake = earthquakes.get(i);
 
+                //Convert String into a Uri Object
+                Uri earthquakeUri = Uri.parse(earthquakes.get(i).getUrl());
+
                 //Create an intent that explicitly launches the url at the current position
                 //Launch an intent when user clicks on an earthquake view
-                Intent launchEarthquakeUrl = new Intent(Intent.ACTION_VIEW);
-                launchEarthquakeUrl.setData(Uri.parse(earthquakes.get(i).getUrl()));
-                startActivity(launchEarthquakeUrl);
+                Intent earthquakeWebsite = new Intent(Intent.ACTION_VIEW);
+                earthquakeWebsite.setData(earthquakeUri);
+                startActivity(earthquakeWebsite);
             }
         });
 

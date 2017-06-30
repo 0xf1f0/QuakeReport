@@ -42,8 +42,7 @@
             android:textAllCaps="true"
             android:textColor="@color/textColorEarthquakeDetails"
             android:textSize="12sp"
-            tools:text="@string/offset_location"
-            />
+            tools:text="@string/offset_location"/>
 
         <TextView
             android:id="@+id/primary_location"
