@@ -15,8 +15,12 @@
  */
 package com.example.android.quakereport;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -41,12 +45,31 @@ public class EarthquakeActivity extends AppCompatActivity {
 //        earthquakes.add(new Earthquake("4.9", "Rio de Janeiro", "Aug 21, 2012"));
 //        earthquakes.add(new Earthquake("1.6", "Paris", "Oct 30, 2011"));
 
-        ArrayList<Earthquake> earthquakes = QueryUtils.extractEarthquakes();
+        final ArrayList<Earthquake> earthquakes = QueryUtils.extractEarthquakes();
         // Create a new {@link ArrayAdapter} of earthquakes
-        EarthquakeAdapter adapter = new EarthquakeAdapter(this, earthquakes);
+        final EarthquakeAdapter adapter = new EarthquakeAdapter(this, earthquakes);
 
         // Find a reference to the {@link ListView} in the layout
         ListView earthquakeListView = (ListView) findViewById(R.id.list);
+
+        //Create an OnClickListener to launch a web browser intent when an
+        //earthquake list view is clicked
+
+        earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
+            {
+                //Get the {@link earthquake } object at the given position(i) the user clicked on
+                Earthquake earthquake = earthquakes.get(i);
+
+                //Create an intent that explicitly launches the url at the current position
+                //Launch an intent when user clicks on an earthquake view
+                Intent launchEarthquakeUrl = new Intent(Intent.ACTION_VIEW);
+                launchEarthquakeUrl.setData(Uri.parse(earthquakes.get(i).getUrl()));
+                startActivity(launchEarthquakeUrl);
+            }
+        });
 
         // Set the adapter on the {@link ListView}
         // so the list can be populated in the user interface

@@ -78,9 +78,9 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake>
         earthquakeOffsetLocation.setText(offsetLocation);
 
         //Find the TextView with the view ID primary_location
-        TextView earthquakPrimaryLocation = (TextView) listEarthquakeView.findViewById(R.id
+        TextView earthquakePrimaryLocation = (TextView) listEarthquakeView.findViewById(R.id
                 .primary_location);
-        earthquakPrimaryLocation.setText(primaryLocation);
+        earthquakePrimaryLocation.setText(primaryLocation);
 
         //Create a new Date object from the time in milliseconds of the earthquake
         Date dateObject = new Date(earthquake.getTimeInMilliseconds());
@@ -108,6 +108,9 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake>
 
         // Set the color on the magnitude circle
         magnitudeCircle.setColor(magnitudeColor);
+
+
+        //
 
         return listEarthquakeView;
     }

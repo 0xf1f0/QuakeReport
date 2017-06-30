@@ -188,7 +188,8 @@ public final class QueryUtils
         // Try to parse the SAMPLE_JSON_RESPONSE. If there's a problem with the way the JSON
         // is formatted, a JSONException exception object will be thrown.
         // Catch the exception so the app doesn't crash, and print the error message to the logs.
-        try {
+        try
+        {
             JSONObject jsonObject = new JSONObject(SAMPLE_JSON_RESPONSE);
 
             //Get the JSON Array Node "features"
@@ -203,15 +204,20 @@ public final class QueryUtils
                 //Create a JSONObject for properties
                 JSONObject properties = index.getJSONObject("properties");
 
+
                 double mag;
                 String place;
                 long time;
+                String url;
+
+                //Extract the appropriate values
                 mag = properties.getDouble("mag");
                 place = properties.getString("place");
                 time = properties.getLong("time");
+                url = properties.getString("url");
 
                 //Add the String values extracted to Earthquake ArrayList
-                earthquakes.add(new Earthquake(mag, place, time));
+                earthquakes.add(new Earthquake(mag, place, time, url));
             }
 
         } catch (JSONException e) {
