@@ -9,9 +9,16 @@ import java.util.List;
  * Created by Lenovo on 7/6/2017.
  */
 
+/*
+   Loads a list of earthquakes by using an AsyncTaskLoader to perform the
+   network request to the destination(USGS) url.
+ */
 public class EarthquakeLoader extends AsyncTaskLoader<List<Earthquake>>
 {
-    final static String LOG_TAG = EarthquakeLoader.class.getSimpleName();
+    /* Tag for log messages */
+    private final static String LOG_TAG = EarthquakeLoader.class.getSimpleName();
+
+    /* Query URL */
     private String mUrl;
 
     //TODO: Extract the earthquake data from the USGS url
@@ -28,29 +35,26 @@ public class EarthquakeLoader extends AsyncTaskLoader<List<Earthquake>>
         forceLoad();
     }
 
+    /*
+     * Run the earthquake data request in the background
+     */
     @Override
     public List<Earthquake> loadInBackground()
     {
-        List<Earthquake> result = null;
+        List<Earthquake> earthquakes = null;
 
         // Don't perform the request if there are no URLs, or the first URL
-        if(getUrl().length() < 1)
+        if(mUrl == null)
             return null;
         try
         {
-            // Perform the HTTP request for earthquake data and process the response.
-            result = QueryUtils.fetchEarthquakeData(getUrl());
+            /* Perform the HTTP request for earthquake data and process the response. */
+            earthquakes = QueryUtils.fetchEarthquakeData(mUrl);
 
         }catch (SecurityException e)
         {
             Log.e(LOG_TAG, e.getMessage(), e);
         }
-        return result;
-    }
-
-    //@return the url of the earthquake data to the displayed
-    public String getUrl()
-    {
-        return mUrl;
+        return earthquakes;
     }
 }
