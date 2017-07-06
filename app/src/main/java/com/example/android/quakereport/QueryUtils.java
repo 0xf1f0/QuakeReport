@@ -155,7 +155,6 @@ public final class QueryUtils
         return earthquakes;
     }
 
-
     /**
      * Make an HTTP request to the given URL and return a String as the response.
      */
