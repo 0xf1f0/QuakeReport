@@ -16,16 +16,11 @@
 package com.example.android.quakereport;
 
 import android.app.LoaderManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.net.Uri;
-import android.net.sip.SipException;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.content.AsyncTaskLoader;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -36,7 +31,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
 {
     // Create a new {@link ArrayAdapter} of earthquakes
     private EarthquakeAdapter mAdapter;
-    private static final int LIST_ID = 1;
+    private static final int LOADER_ID = 1;
 
     public static final String LOG_TAG = EarthquakeActivity.class.getName();
 
@@ -55,7 +50,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         updateUI();
 
         //Initialize the LoaderManager
-        getLoaderManager().initLoader(LIST_ID, null, this);
+        getLoaderManager().initLoader(LOADER_ID, null, this);
 
     }
 
@@ -122,6 +117,6 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     public void onLoaderReset(Loader<List<Earthquake>> loader)
     {
         // TODO: Loader reset, so we can clear out our existing data.
-        loader.reset();
+        mAdapter.clear();
     }
 }
