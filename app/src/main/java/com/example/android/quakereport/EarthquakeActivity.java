@@ -17,37 +17,43 @@ package com.example.android.quakereport;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.net.sip.SipException;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 
-public class EarthquakeActivity extends AppCompatActivity {
+public class EarthquakeActivity extends AppCompatActivity
+{
 
     public static final String LOG_TAG = EarthquakeActivity.class.getName();
 
+    //TODO: Extract the earthquake data from the USGS url
+
+    final static String USGS_REQUEST_URL = "https://earthquake.usgs" +
+            ".gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=6" +
+            "&limit=10";
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
-//        // Create a fake list of earthquake magnitude, locations, and date.
-//        ArrayList<Earthquake> earthquakes = new ArrayList<>();
-//        earthquakes.add(new Earthquake("7.2", "San Francisco", "Feb 2, 2016"));
-//        earthquakes.add(new Earthquake("6.1", "London", "July 20, 2015"));
-//        earthquakes.add(new Earthquake("3.9", "Tokyo", "Nov 10, 2014"));
-//        earthquakes.add(new Earthquake("5.4", "Mexico City", "May 3, 2014"));
-//        earthquakes.add(new Earthquake("2.8", "Moscow", "Jan 31, 2013"));
-//        earthquakes.add(new Earthquake("4.9", "Rio de Janeiro", "Aug 21, 2012"));
-//        earthquakes.add(new Earthquake("1.6", "Paris", "Oct 30, 2011"));
+        //Execute the Async task
+        EarthquakeAsyncTask earthquakeAsyncTask = new EarthquakeAsyncTask();
+        earthquakeAsyncTask.execute(USGS_REQUEST_URL);
+    }
 
-        final ArrayList<Earthquake> earthquakes = QueryUtils.extractEarthquakes();
-        // Create a new {@link ArrayAdapter} of earthquakes
-        EarthquakeAdapter adapter = new EarthquakeAdapter(this, earthquakes);
+    private void updateUI(final ArrayList<Earthquake> earthquakes)
+    {
+        // Create a new {@link ArrayAdapter} of     earthquakes
+        EarthquakeAdapter adapter = new EarthquakeAdapter(EarthquakeActivity.this, earthquakes);
 
         // Find a reference to the {@link ListView} in the layout
         ListView earthquakeListView = (ListView) findViewById(R.id.list);
@@ -55,27 +61,68 @@ public class EarthquakeActivity extends AppCompatActivity {
         //Create an OnClickListener to launch a web browser intent when an
         //earthquake list view is clicked
 
-        earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        if (earthquakeListView != null)
         {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
+            earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
             {
-                //Get the {@link earthquake } object at the given position(i) the user clicked on
-                Earthquake earthquake = earthquakes.get(i);
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
+                {
+                    //Get the {@link earthquake } object at the given position(i) the user clicked on
+                    Earthquake earthquake = earthquakes.get(i);
 
-                //Convert String into a Uri Object
-                Uri earthquakeUri = Uri.parse(earthquakes.get(i).getUrl());
+                    //Convert String into a Uri Object
+                    Uri earthquakeUri = Uri.parse(earthquakes.get(i).getUrl());
 
-                //Create an intent that explicitly launches the url at the current position
-                //Launch an intent when user clicks on an earthquake view
-                Intent earthquakeWebsite = new Intent(Intent.ACTION_VIEW);
-                earthquakeWebsite.setData(earthquakeUri);
-                startActivity(earthquakeWebsite);
+                    //Create an intent that explicitly launches the url at the current position
+                    //Launch an intent when user clicks on an earthquake view
+                    Intent earthquakeWebsite = new Intent(Intent.ACTION_VIEW);
+                    earthquakeWebsite.setData(earthquakeUri);
+                    startActivity(earthquakeWebsite);
+                }
+            });
+
+            // Set the adapter on the {@link ListView}
+            // so the list can be populated in the user interface
+            earthquakeListView.setAdapter(adapter);
+        }
+    }
+
+    private class EarthquakeAsyncTask extends AsyncTask<String, Void, ArrayList<Earthquake>>
+    {
+
+        @Override
+        protected ArrayList<Earthquake> doInBackground(String... urls) throws SecurityException
+        {
+            ArrayList<Earthquake> result = null;
+            // Don't perform the request if there are no URLs, or the first URL
+            if(urls.length < 1 || urls[0] == null)
+            {
+                return null;
             }
-        });
+            try
+            {
+                // Perform the HTTP request for earthquake data and process the response.
+                result = QueryUtils.fetchEarthquakeData(urls[0]);
 
-        // Set the adapter on the {@link ListView}
-        // so the list can be populated in the user interface
-        earthquakeListView.setAdapter(adapter);
+            }catch (SecurityException e)
+            {
+                Log.e(LOG_TAG, e.getMessage(), e);
+            }
+            return result;
+        }
+
+
+        @Override
+        protected void onPostExecute(ArrayList<Earthquake> result)
+        {
+            // If there is no result, do nothing.
+            if(result == null)
+            {
+                return;
+            }
+            updateUI(result);
+        }
+
     }
 }
