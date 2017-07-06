@@ -27,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class EarthquakeActivity extends AppCompatActivity
 {
@@ -50,7 +51,7 @@ public class EarthquakeActivity extends AppCompatActivity
         earthquakeAsyncTask.execute(USGS_REQUEST_URL);
     }
 
-    private void updateUI(final ArrayList<Earthquake> earthquakes)
+    private void updateUI(final List<Earthquake> earthquakes)
     {
         // Create a new {@link ArrayAdapter} of     earthquakes
         EarthquakeAdapter adapter = new EarthquakeAdapter(EarthquakeActivity.this, earthquakes);
@@ -88,13 +89,13 @@ public class EarthquakeActivity extends AppCompatActivity
         }
     }
 
-    private class EarthquakeAsyncTask extends AsyncTask<String, Void, ArrayList<Earthquake>>
+    private class EarthquakeAsyncTask extends AsyncTask<String, Void, List<Earthquake>>
     {
 
         @Override
-        protected ArrayList<Earthquake> doInBackground(String... urls) throws SecurityException
+        protected List<Earthquake> doInBackground(String... urls) throws SecurityException
         {
-            ArrayList<Earthquake> result = null;
+            List<Earthquake> result = null;
             // Don't perform the request if there are no URLs, or the first URL
             if(urls.length < 1 || urls[0] == null)
             {
@@ -114,7 +115,7 @@ public class EarthquakeActivity extends AppCompatActivity
 
 
         @Override
-        protected void onPostExecute(ArrayList<Earthquake> result)
+        protected void onPostExecute(List<Earthquake> result)
         {
             // If there is no result, do nothing.
             if(result == null)
