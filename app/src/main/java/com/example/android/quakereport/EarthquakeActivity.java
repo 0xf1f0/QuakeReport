@@ -31,6 +31,8 @@ import java.util.List;
 
 public class EarthquakeActivity extends AppCompatActivity
 {
+    // Create a new {@link ArrayAdapter} of earthquakes
+    private EarthquakeAdapter mAdapter;
 
     public static final String LOG_TAG = EarthquakeActivity.class.getName();
 
@@ -46,47 +48,49 @@ public class EarthquakeActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
+        //Display the earthquake data
+        updateUI();
+
         //Execute the Async task
         EarthquakeAsyncTask earthquakeAsyncTask = new EarthquakeAsyncTask();
         earthquakeAsyncTask.execute(USGS_REQUEST_URL);
     }
 
-    private void updateUI(final List<Earthquake> earthquakes)
+    private void updateUI()
     {
-        // Create a new {@link ArrayAdapter} of     earthquakes
-        EarthquakeAdapter adapter = new EarthquakeAdapter(EarthquakeActivity.this, earthquakes);
+        mAdapter = new EarthquakeAdapter(this, new ArrayList<Earthquake>());
 
         // Find a reference to the {@link ListView} in the layout
         ListView earthquakeListView = (ListView) findViewById(R.id.list);
 
+        // Set the mAdapter on the {@link ListView}
+        // so the list can be populated in the user interface
+        if (earthquakeListView != null)
+        {
+            earthquakeListView.setAdapter(mAdapter);
+        }
+
         //Create an OnClickListener to launch a web browser intent when an
         //earthquake list view is clicked
 
-        if (earthquakeListView != null)
+        earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
-            earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
             {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
-                {
-                    //Get the {@link earthquake } object at the given position(i) the user clicked on
-                    Earthquake earthquake = earthquakes.get(i);
+                //Get the {@link earthquake } object at the given position(i) the user clicked on
+                Earthquake earthquake = mAdapter.getItem(i);
 
-                    //Convert String into a Uri Object
-                    Uri earthquakeUri = Uri.parse(earthquakes.get(i).getUrl());
+                //Convert String into a Uri Object
+                Uri earthquakeUri = Uri.parse(mAdapter.getItem(i).getUrl());
 
-                    //Create an intent that explicitly launches the url at the current position
-                    //Launch an intent when user clicks on an earthquake view
-                    Intent earthquakeWebsite = new Intent(Intent.ACTION_VIEW);
-                    earthquakeWebsite.setData(earthquakeUri);
-                    startActivity(earthquakeWebsite);
-                }
-            });
-
-            // Set the adapter on the {@link ListView}
-            // so the list can be populated in the user interface
-            earthquakeListView.setAdapter(adapter);
-        }
+                //Create an intent that explicitly launches the url at the current position
+                //Launch an intent when user clicks on an earthquake view
+                Intent earthquakeWebsite = new Intent(Intent.ACTION_VIEW);
+                earthquakeWebsite.setData(earthquakeUri);
+                startActivity(earthquakeWebsite);
+            }
+        });
     }
 
     private class EarthquakeAsyncTask extends AsyncTask<String, Void, List<Earthquake>>
@@ -117,12 +121,14 @@ public class EarthquakeActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(List<Earthquake> result)
         {
+            //Clear the adapter of previous earthquake data
+            mAdapter.clear();
+
             // If there is no result, do nothing.
-            if(result == null)
+            if (result != null && !result.isEmpty())
             {
-                return;
+                mAdapter.addAll(result);
             }
-            updateUI(result);
         }
 
     }
