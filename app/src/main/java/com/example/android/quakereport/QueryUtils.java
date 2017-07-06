@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
@@ -76,11 +77,12 @@ public final class QueryUtils
             Log.e(LOG_TAG, "Error closing input stream", e);
         }
 
-        // Extract relevant fields from the JSON response and create an {@link ArrayList<Earthquake> } object
+        // Extract relevant fields from the JSON response and create an
+        // {@link ArrayList<Earthquake> } object
 
 
         // Return the {@link ArrayList<Earthquake>}
-        return  extractFeatureFromJSON(jsonResponse);
+        return extractFeatureFromJSON(jsonResponse);
     }
 
     /**
@@ -96,7 +98,8 @@ public final class QueryUtils
         ArrayList<Earthquake> earthquakes = new ArrayList<>();
 
         // If the JSON string is empty or null, then return early.
-        if (TextUtils.isEmpty(earthquakeJSON)) {
+        if (TextUtils.isEmpty(earthquakeJSON))
+        {
             return null;
         }
 
@@ -178,11 +181,12 @@ public final class QueryUtils
 
             // If the request was successful (response code 200),
             // then read the input stream and parse the response.
-            if (urlConnection.getResponseCode() == 200)
+            if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK)
             {
                 inputStream = urlConnection.getInputStream();
                 jsonResponse = readFromStream(inputStream);
-            } else
+            }
+            else
             {
                 Log.e(LOG_TAG, "Error response code: " + urlConnection.getResponseCode());
             }

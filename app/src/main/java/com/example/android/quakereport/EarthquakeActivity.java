@@ -130,6 +130,5 @@ public class EarthquakeActivity extends AppCompatActivity
                 mAdapter.addAll(result);
             }
         }
-
     }
 }
