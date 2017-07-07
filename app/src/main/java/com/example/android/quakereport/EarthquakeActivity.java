@@ -16,8 +16,11 @@
 package com.example.android.quakereport;
 
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -41,6 +44,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     private static final int LOADER_ID = 1;
     private TextView emptyStatTextView;
     private ProgressBar progressBar;
+    private ListView earthquakeListView;
 
     public static final String LOG_TAG = EarthquakeActivity.class.getName();
 
@@ -58,17 +62,20 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
 
         //Display the earthquake data
         updateUI();
-        //Initialize the LoaderManager
-        getLoaderManager().initLoader(LOADER_ID, null, this);
 
+        //Check for internet connectivity
+        if (hasInternetConnectivity())
+        {
+            //Initialize the LoaderManager
+            getLoaderManager().initLoader(LOADER_ID, null, this);
+        }
     }
 
     private void updateUI()
     {
-        mAdapter = new EarthquakeAdapter(this, new ArrayList<Earthquake>());
-
         // Find a reference to the {@link ListView} in the layout
-        ListView earthquakeListView = (ListView) findViewById(R.id.list);
+        earthquakeListView = (ListView) findViewById(R.id.list);
+        mAdapter = new EarthquakeAdapter(this, new ArrayList<Earthquake>());
 
         //Create an OnClickListener to launch a web browser intent when an
         //earthquake list view is clicked
@@ -96,8 +103,9 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
                     startActivity(earthquakeWebsite);
                 }
             });
+
             //Set an empty view if no earthquake data is available
-            emptyStatTextView = (TextView)findViewById(R.id.empty_state);
+            emptyStatTextView = (TextView) findViewById(R.id.empty_state);
             earthquakeListView.setEmptyView(emptyStatTextView);
         }
 
@@ -117,10 +125,13 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     {
         //Hide the progress bar
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.GONE);
+        if (progressBar != null)
+        {
+            progressBar.setVisibility(View.GONE);
+        }
 
         //Set the text in the empty state Text_View at the first load
-        emptyStatTextView.setText(R.string.no_earthquake);
+        emptyStatTextView.setText(R.string.no_internet);
 
         //Clear the adapter of previous earthquake data
         mAdapter.clear();
@@ -129,7 +140,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         // If there is earthquake, do nothing
         if (earthquakes != null && !earthquakes.isEmpty())
         {
-//            mAdapter.addAll(earthquakes);
+            mAdapter.addAll(earthquakes);
         }
     }
 
@@ -139,5 +150,16 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         Log.i(LOG_TAG, "-> Calling: onLoaderReset");
         // TODO: Loader reset, so we can clear out our existing data.
         mAdapter.clear();
+    }
+
+    /***
+     * @return the internet connectivity status of the android device
+     */
+    private Boolean hasInternetConnectivity()
+    {
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService
+                (CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnectedOrConnecting();
     }
 }
