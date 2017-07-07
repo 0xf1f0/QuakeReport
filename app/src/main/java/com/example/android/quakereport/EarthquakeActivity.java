@@ -25,6 +25,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -39,6 +40,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     private EarthquakeAdapter mAdapter;
     private static final int LOADER_ID = 1;
     private TextView emptyStatTextView;
+    private ProgressBar progressBar;
 
     public static final String LOG_TAG = EarthquakeActivity.class.getName();
 
@@ -112,6 +114,9 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     @Override
     public void onLoadFinished(Loader<List<Earthquake>> loader, List<Earthquake> earthquakes)
     {
+        //Hide the progress bar
+        progressBar.setVisibility(View.GONE);
+
         //Set the text in the empty state Text_View at the first load
         emptyStatTextView.setText(R.string.no_earthquake);
 
@@ -121,7 +126,9 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         Log.i(LOG_TAG, "-> Calling: onLoadFinished");
         // If there is earthquake, do nothing
         if (earthquakes != null && !earthquakes.isEmpty())
+        {
             mAdapter.addAll(earthquakes);
+        }
     }
 
     @Override
