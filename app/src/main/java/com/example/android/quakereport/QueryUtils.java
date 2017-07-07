@@ -21,6 +21,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.example.android.quakereport.EarthquakeActivity.LOG_TAG;
 
@@ -62,8 +63,16 @@ public final class QueryUtils
      * single
      * earthquake.
      */
-    public static ArrayList<Earthquake> fetchEarthquakeData(String requestUrl)
+    public static List<Earthquake> fetchEarthquakeData(String requestUrl)
     {
+        //Simulate a slow connection
+        try
+        {
+            Thread.sleep(2000);
+        } catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
 
         Log.i(LOG_TAG, "-> Calling: fetchEarthquakeData");
         // Create URL object

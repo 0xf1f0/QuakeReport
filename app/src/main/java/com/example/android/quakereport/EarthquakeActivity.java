@@ -108,6 +108,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     {
         Log.i(LOG_TAG, "-> Calling: onCreateLoader");
         // TODO: Create a new loader for the given URL
+
         return new EarthquakeLoader(this, USGS_REQUEST_URL);
     }
 
@@ -115,6 +116,9 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     public void onLoadFinished(Loader<List<Earthquake>> loader, List<Earthquake> earthquakes)
     {
         //Hide the progress bar
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.GONE);
+
         //Set the text in the empty state Text_View at the first load
         emptyStatTextView.setText(R.string.no_earthquake);
 
