@@ -3,6 +3,7 @@ package com.example.android.quakereport;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.util.Log;
+
 import java.util.List;
 
 /**
@@ -22,7 +23,6 @@ public class EarthquakeLoader extends AsyncTaskLoader<List<Earthquake>>
     private String mUrl;
 
     //TODO: Extract the earthquake data from the USGS url
-
     public EarthquakeLoader(Context context, String url)
     {
         super(context);
@@ -32,6 +32,7 @@ public class EarthquakeLoader extends AsyncTaskLoader<List<Earthquake>>
     @Override
     protected void onStartLoading()
     {
+        Log.i(LOG_TAG, "-> Calling: onStartLoading");
         forceLoad();
     }
 
@@ -41,17 +42,18 @@ public class EarthquakeLoader extends AsyncTaskLoader<List<Earthquake>>
     @Override
     public List<Earthquake> loadInBackground()
     {
+        Log.i(LOG_TAG, "-> Calling: loadInBackground");
         List<Earthquake> earthquakes = null;
 
         // Don't perform the request if there are no URLs, or the first URL
-        if(mUrl == null)
+        if (mUrl == null)
             return null;
         try
         {
             /* Perform the HTTP request for earthquake data and process the response. */
             earthquakes = QueryUtils.fetchEarthquakeData(mUrl);
 
-        }catch (SecurityException e)
+        } catch (SecurityException e)
         {
             Log.e(LOG_TAG, e.getMessage(), e);
         }

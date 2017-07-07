@@ -21,13 +21,16 @@ import android.content.Loader;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class EarthquakeActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Earthquake>>
+public class EarthquakeActivity extends AppCompatActivity implements LoaderManager
+        .LoaderCallbacks<List<Earthquake>>
 {
     // Create a new {@link ArrayAdapter} of earthquakes
     private EarthquakeAdapter mAdapter;
@@ -43,12 +46,12 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        Log.i(LOG_TAG, "-> Calling: onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
         //Display the earthquake data
         updateUI();
-
         //Initialize the LoaderManager
         getLoaderManager().initLoader(LOADER_ID, null, this);
 
@@ -78,7 +81,8 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
                 {
-                    //Get the {@link earthquake } object at the given position(i) the user clicked on
+                    //Get the {@link earthquake } object at the given position(i) the user
+                    // clicked on
                     Earthquake earthquake = mAdapter.getItem(i);
 
                     //Convert String into a Uri Object
@@ -98,6 +102,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     @Override
     public Loader<List<Earthquake>> onCreateLoader(int i, Bundle bundle)
     {
+        Log.i(LOG_TAG, "-> Calling: onCreateLoader");
         // TODO: Create a new loader for the given URL
         return new EarthquakeLoader(this, USGS_REQUEST_URL);
     }
@@ -108,14 +113,16 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         //Clear the adapter of previous earthquake data
         mAdapter.clear();
 
+        Log.i(LOG_TAG, "-> Calling: onLoadFinished");
         // If there is earthquake, do nothing
-        if(earthquakes != null && !earthquakes.isEmpty())
+        if (earthquakes != null && !earthquakes.isEmpty())
             mAdapter.addAll(earthquakes);
     }
 
     @Override
     public void onLoaderReset(Loader<List<Earthquake>> loader)
     {
+        Log.i(LOG_TAG, "-> Calling: onLoaderReset");
         // TODO: Loader reset, so we can clear out our existing data.
         mAdapter.clear();
     }

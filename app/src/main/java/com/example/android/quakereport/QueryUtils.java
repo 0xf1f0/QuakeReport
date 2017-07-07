@@ -64,6 +64,8 @@ public final class QueryUtils
      */
     public static ArrayList<Earthquake> fetchEarthquakeData(String requestUrl)
     {
+
+        Log.i(LOG_TAG, "-> Calling: fetchEarthquakeData");
         // Create URL object
         URL url = createUrl(requestUrl);
 
@@ -184,8 +186,7 @@ public final class QueryUtils
             {
                 inputStream = urlConnection.getInputStream();
                 jsonResponse = readFromStream(inputStream);
-            }
-            else
+            } else
             {
                 Log.e(LOG_TAG, "Error response code: " + urlConnection.getResponseCode());
             }

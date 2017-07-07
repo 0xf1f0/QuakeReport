@@ -25,7 +25,7 @@ public class Earthquake
      * @param timeInMilliseconds is the date the earthquake occurred
      * @param url is the USGS url of the earthquake
      */
-    public Earthquake (double magnitude, String location, long timeInMilliseconds, String url)
+    public Earthquake(double magnitude, String location, long timeInMilliseconds, String url)
     {
         mMagnitude = magnitude;
         mLocation = location;
