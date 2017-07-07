@@ -20,4 +20,5 @@
     <string name="primary_location">Rumoi, Japan</string>
     <string name="date">Feb 2, 2016</string>
     <string name="time">4:00 PM</string>
+    <string name="no_earthquake">No earthquakes found</string>
 </resources>

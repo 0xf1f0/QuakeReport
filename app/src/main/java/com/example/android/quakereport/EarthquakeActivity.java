@@ -25,6 +25,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +38,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     // Create a new {@link ArrayAdapter} of earthquakes
     private EarthquakeAdapter mAdapter;
     private static final int LOADER_ID = 1;
+    private TextView emptyStatTextView;
 
     public static final String LOG_TAG = EarthquakeActivity.class.getName();
 
@@ -64,18 +68,13 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         // Find a reference to the {@link ListView} in the layout
         ListView earthquakeListView = (ListView) findViewById(R.id.list);
 
+        //Create an OnClickListener to launch a web browser intent when an
+        //earthquake list view is clicked
         // Set the mAdapter on the {@link ListView}
         // so the list can be populated in the user interface
         if (earthquakeListView != null)
         {
             earthquakeListView.setAdapter(mAdapter);
-        }
-
-        //Create an OnClickListener to launch a web browser intent when an
-        //earthquake list view is clicked
-
-        if (earthquakeListView != null)
-        {
             earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
             {
                 @Override
@@ -95,6 +94,9 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
                     startActivity(earthquakeWebsite);
                 }
             });
+            //Set an empty view if no earthquake data is available
+            emptyStatTextView = (TextView)findViewById(R.id.empty_state);
+            earthquakeListView.setEmptyView(emptyStatTextView);
         }
 
     }
@@ -110,6 +112,9 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     @Override
     public void onLoadFinished(Loader<List<Earthquake>> loader, List<Earthquake> earthquakes)
     {
+        //Set the text in the empty state Text_View at the first load
+        emptyStatTextView.setText(R.string.no_earthquake);
+
         //Clear the adapter of previous earthquake data
         mAdapter.clear();
 
