@@ -115,8 +115,6 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     public void onLoadFinished(Loader<List<Earthquake>> loader, List<Earthquake> earthquakes)
     {
         //Hide the progress bar
-        progressBar.setVisibility(View.GONE);
-
         //Set the text in the empty state Text_View at the first load
         emptyStatTextView.setText(R.string.no_earthquake);
 
@@ -127,7 +125,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         // If there is earthquake, do nothing
         if (earthquakes != null && !earthquakes.isEmpty())
         {
-            mAdapter.addAll(earthquakes);
+//            mAdapter.addAll(earthquakes);
         }
     }
 
