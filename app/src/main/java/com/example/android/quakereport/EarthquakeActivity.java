@@ -96,7 +96,11 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
                 Earthquake earthquake = mAdapter.getItem(i);
 
                 //Convert String into a Uri Object
-                Uri earthquakeUri = Uri.parse(earthquake.getUrl());
+                Uri earthquakeUri = null;
+                if (earthquake != null)
+                {
+                    earthquakeUri = Uri.parse(earthquake.getUrl());
+                }
 
                 //Create an intent that explicitly launches the url at the current position
                 //Launch an intent when user clicks on an earthquake view
@@ -147,7 +151,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
             mAdapter.addAll(earthquakes);
 
             //Hide the progress bar from view once there are earthquake data to be displayed
-            if(progressBar != null && !mAdapter.isEmpty())
+            if (progressBar != null && !mAdapter.isEmpty())
                 progressBar.setVisibility(View.GONE);
         }
     }
@@ -184,8 +188,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
             //Initialize the LoaderManager
             LoaderManager listLoader = getLoaderManager();
             listLoader.initLoader(LOADER_ID, null, this);
-        }
-        else
+        } else
         {
             //Display the empty state only when connectivity is false and
             //Loader Manager has not been initialized
@@ -202,7 +205,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         //Hide the progress bar from view
         progressBar.setVisibility(View.GONE);
         //Set the text in the empty state Text_View at the first load
-        emptyStateTextView.setText(R.string.no_internet);
+        emptyStateTextView.setText(R.string.no_internet_connection);
 
     }
 }

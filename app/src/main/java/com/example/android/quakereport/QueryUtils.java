@@ -17,20 +17,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.example.android.quakereport.EarthquakeActivity.LOG_TAG;
 
 /**
  * Helper methods related to requesting and receiving earthquake data from USGS.
  */
 public final class QueryUtils
 {
+    private static final String LOG_TAG = QueryUtils.class.getSimpleName();
     /**
      * Create a private constructor because no one should ever create a {@link QueryUtils} object.
      * This class is only meant to hold static variables and methods, which can be accessed
@@ -204,8 +201,7 @@ public final class QueryUtils
         } catch (IOException e)
         {
             Log.e(LOG_TAG, "Problem retrieving the earthquake JSON results.", e);
-        }
-        finally
+        } finally
         {
             if (urlConnection != null)
             {
