@@ -67,13 +67,13 @@ public final class QueryUtils
     {
         //Wait 2 sec before earthquake data is fetched
         //Show the progress bar during this period
-        try
-        {
-            Thread.sleep(2000);
-        } catch (InterruptedException e)
-        {
-            e.printStackTrace();
-        }
+//        try
+//        {
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e)
+//        {
+//            e.printStackTrace();
+//        }
 
         Log.i(LOG_TAG, "-> Calling: fetchEarthquakeData");
         // Create URL object

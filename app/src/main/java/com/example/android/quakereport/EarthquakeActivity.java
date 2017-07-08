@@ -51,7 +51,6 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
             ".gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=6" +
             "&limit=10";
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -90,7 +89,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
                 Earthquake earthquake = mAdapter.getItem(i);
 
                 //Convert String into a Uri Object
-                Uri earthquakeUri = Uri.parse(mAdapter.getItem(i).getUrl());
+                Uri earthquakeUri = Uri.parse(earthquake.getUrl());
 
                 //Create an intent that explicitly launches the url at the current position
                 //Launch an intent when user clicks on an earthquake view
@@ -144,6 +143,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     public void onLoaderReset(Loader<List<Earthquake>> loader)
     {
         Log.i(LOG_TAG, "-> Calling: onLoaderReset");
+
         // TODO: Loader reset, so we can clear out our existing data.
         mAdapter.clear();
     }
