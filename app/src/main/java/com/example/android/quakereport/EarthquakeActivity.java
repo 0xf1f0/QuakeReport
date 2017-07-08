@@ -31,10 +31,10 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.android.quakereport.R.id.progressBar;
 
 public class EarthquakeActivity extends AppCompatActivity implements LoaderManager
         .LoaderCallbacks<List<Earthquake>>
@@ -42,10 +42,9 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     // Create a new {@link ArrayAdapter} of earthquakes
     private EarthquakeAdapter mAdapter;
     private static final int LOADER_ID = 1;
-    private TextView emptyStatTextView;
-    private ProgressBar progressBar;
+    private TextView emptyStateTextView;
     private ListView earthquakeListView;
-
+    private View progressBar;
     public static final String LOG_TAG = EarthquakeActivity.class.getName();
 
     final static String USGS_REQUEST_URL = "https://earthquake.usgs" +
@@ -60,79 +59,72 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
-        //Display the earthquake data
-        updateUI();
+        // Find a reference to the {@link ListView} in the layout
+        earthquakeListView = (ListView) findViewById(R.id.list);
+
+        //Set an empty view if no earthquake data is available
+        emptyStateTextView = (TextView) findViewById(R.id.empty_state);
+
+        //Update the empty state with the no connection error message
+        earthquakeListView.setEmptyView(emptyStateTextView);
+
+        // Create a new adapter that takes an empty list of earthquakes as input
+        mAdapter = new EarthquakeAdapter(this, new ArrayList<Earthquake>());
+
+        //Link the progress bar
+        progressBar = findViewById(R.id.progressBar);
+
+        // Set the mAdapter on the {@link ListView}
+        // so the list can be populated in the user interface
+        earthquakeListView.setAdapter(mAdapter);
+
+        //Create an OnClickListener to launch a web browser intent when an
+        //earthquake list view is clicked
+        earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
+            {
+                //Get the {@link earthquake } object at the given position(i) the user
+                // clicked on
+                Earthquake earthquake = mAdapter.getItem(i);
+
+                //Convert String into a Uri Object
+                Uri earthquakeUri = Uri.parse(mAdapter.getItem(i).getUrl());
+
+                //Create an intent that explicitly launches the url at the current position
+                //Launch an intent when user clicks on an earthquake view
+                Intent earthquakeWebsite = new Intent(Intent.ACTION_VIEW);
+                earthquakeWebsite.setData(earthquakeUri);
+                startActivity(earthquakeWebsite);
+            }
+        });
 
         //Check for internet connectivity
-        if (hasInternetConnectivity())
+        if (deviceHasInternetConnectivity())
         {
             //Initialize the LoaderManager
             getLoaderManager().initLoader(LOADER_ID, null, this);
         }
-    }
-
-    private void updateUI()
-    {
-        // Find a reference to the {@link ListView} in the layout
-        earthquakeListView = (ListView) findViewById(R.id.list);
-        mAdapter = new EarthquakeAdapter(this, new ArrayList<Earthquake>());
-
-        //Create an OnClickListener to launch a web browser intent when an
-        //earthquake list view is clicked
-        // Set the mAdapter on the {@link ListView}
-        // so the list can be populated in the user interface
-        if (earthquakeListView != null)
+        else
         {
-            earthquakeListView.setAdapter(mAdapter);
-            earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-            {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
-                {
-                    //Get the {@link earthquake } object at the given position(i) the user
-                    // clicked on
-                    Earthquake earthquake = mAdapter.getItem(i);
-
-                    //Convert String into a Uri Object
-                    Uri earthquakeUri = Uri.parse(mAdapter.getItem(i).getUrl());
-
-                    //Create an intent that explicitly launches the url at the current position
-                    //Launch an intent when user clicks on an earthquake view
-                    Intent earthquakeWebsite = new Intent(Intent.ACTION_VIEW);
-                    earthquakeWebsite.setData(earthquakeUri);
-                    startActivity(earthquakeWebsite);
-                }
-            });
-
-            //Set an empty view if no earthquake data is available
-            emptyStatTextView = (TextView) findViewById(R.id.empty_state);
-            earthquakeListView.setEmptyView(emptyStatTextView);
+            //Hide the progress bar from view
+            progressBar.setVisibility(View.GONE);
+            //Set the text in the empty state Text_View at the first load
+            emptyStateTextView.setText(R.string.no_internet);
         }
-
     }
 
     @Override
     public Loader<List<Earthquake>> onCreateLoader(int i, Bundle bundle)
     {
         Log.i(LOG_TAG, "-> Calling: onCreateLoader");
-        // TODO: Create a new loader for the given URL
-
         return new EarthquakeLoader(this, USGS_REQUEST_URL);
     }
 
     @Override
     public void onLoadFinished(Loader<List<Earthquake>> loader, List<Earthquake> earthquakes)
     {
-        //Hide the progress bar
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        if (progressBar != null)
-        {
-            progressBar.setVisibility(View.GONE);
-        }
-
-        //Set the text in the empty state Text_View at the first load
-        emptyStatTextView.setText(R.string.no_internet);
-
         //Clear the adapter of previous earthquake data
         mAdapter.clear();
 
@@ -141,6 +133,10 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         if (earthquakes != null && !earthquakes.isEmpty())
         {
             mAdapter.addAll(earthquakes);
+
+            //Hide the progress bar from view once there are earthquake data to be displayed
+            if(progressBar != null && !mAdapter.isEmpty())
+                progressBar.setVisibility(View.GONE);
         }
     }
 
@@ -155,11 +151,11 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     /***
      * @return the internet connectivity status of the android device
      */
-    private Boolean hasInternetConnectivity()
+    private Boolean deviceHasInternetConnectivity()
     {
         ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService
-                (CONNECTIVITY_SERVICE);
+                (Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        return networkInfo != null && networkInfo.isConnectedOrConnecting();
+        return networkInfo != null && networkInfo.isConnected();
     }
 }

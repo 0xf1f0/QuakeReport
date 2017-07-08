@@ -65,7 +65,8 @@ public final class QueryUtils
      */
     public static List<Earthquake> fetchEarthquakeData(String requestUrl)
     {
-        //Simulate a slow connection
+        //Wait 2 sec before earthquake data is fetched
+        //Show the progress bar during this period
         try
         {
             Thread.sleep(2000);
