@@ -23,18 +23,17 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.android.quakereport.R.id.progressBar;
 
 public class EarthquakeActivity extends AppCompatActivity implements LoaderManager
         .LoaderCallbacks<List<Earthquake>>
@@ -44,7 +43,9 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     private static final int LOADER_ID = 1;
     private TextView emptyStateTextView;
     private ListView earthquakeListView;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private View progressBar;
+    private Boolean deviceHasInternet;
     public static final String LOG_TAG = EarthquakeActivity.class.getName();
 
     final static String USGS_REQUEST_URL = "https://earthquake.usgs" +
@@ -61,6 +62,9 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         // Find a reference to the {@link ListView} in the layout
         earthquakeListView = (ListView) findViewById(R.id.list);
 
+        // Find a reference to the {@link SwipeRefreshLayout} in the layout
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+
         //Set an empty view if no earthquake data is available
         emptyStateTextView = (TextView) findViewById(R.id.empty_state);
 
@@ -72,6 +76,9 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
 
         //Link the progress bar
         progressBar = findViewById(R.id.progressBar);
+
+        //check device's internet connectivity
+        getDeviceHasInternet();
 
         // Set the mAdapter on the {@link ListView}
         // so the list can be populated in the user interface
@@ -99,19 +106,25 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
             }
         });
 
-        //Check for internet connectivity
-        if (deviceHasInternetConnectivity())
+
+        /*
+         * Sets up a SwipeRefreshLayout.OnRefreshListener that is invoked when the user
+         * performs a swipe-to-refresh gesture.
+         */
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
         {
-            //Initialize the LoaderManager
-            getLoaderManager().initLoader(LOADER_ID, null, this);
-        }
-        else
-        {
-            //Hide the progress bar from view
-            progressBar.setVisibility(View.GONE);
-            //Set the text in the empty state Text_View at the first load
-            emptyStateTextView.setText(R.string.no_internet);
-        }
+            @Override
+            public void onRefresh()
+            {
+                Log.i(LOG_TAG, "-> Calling: Refresh swiped");
+
+                //Update the UI
+                updateUI();
+            }
+        });
+
+        //Update the UI
+        updateUI();
     }
 
     @Override
@@ -151,11 +164,45 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     /***
      * @return the internet connectivity status of the android device
      */
-    private Boolean deviceHasInternetConnectivity()
+    private Boolean getDeviceHasInternet()
     {
         ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService
                 (Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        return networkInfo != null && networkInfo.isConnected();
+        deviceHasInternet = networkInfo != null && networkInfo.isConnected();
+        return deviceHasInternet;
+    }
+
+    //Update the user interface based on action performed by the user and device's status
+    private void updateUI()
+    {
+        Log.i(LOG_TAG, "-> Calling: updateUI");
+        Log.i(LOG_TAG, "-> Device has internet: " + getDeviceHasInternet());
+        //Check for internet connectivity
+        if (getDeviceHasInternet())
+        {
+            //Initialize the LoaderManager
+            LoaderManager listLoader = getLoaderManager();
+            listLoader.initLoader(LOADER_ID, null, this);
+        }
+        else
+        {
+            //Display the empty state only when connectivity is false and
+            //Loader Manager has not been initialized
+            displayEmptyState();
+        }
+        //Update swipe refresh status
+        swipeRefreshLayout.setRefreshing(false);
+
+    }
+
+    private void displayEmptyState()
+    {
+        Log.i(LOG_TAG, "-> Calling: displayEmptyState");
+        //Hide the progress bar from view
+        progressBar.setVisibility(View.GONE);
+        //Set the text in the empty state Text_View at the first load
+        emptyStateTextView.setText(R.string.no_internet);
+
     }
 }

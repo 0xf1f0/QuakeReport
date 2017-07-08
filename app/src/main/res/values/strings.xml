@@ -21,4 +21,5 @@
     <string name="date">Feb 2, 2016</string>
     <string name="time">4:00 PM</string>
     <string name="no_internet">No internet connection</string>
+    <string name="menu_refresh">Refresh</string>
 </resources>

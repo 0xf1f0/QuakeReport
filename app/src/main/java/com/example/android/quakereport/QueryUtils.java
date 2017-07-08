@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
@@ -203,7 +204,8 @@ public final class QueryUtils
         } catch (IOException e)
         {
             Log.e(LOG_TAG, "Problem retrieving the earthquake JSON results.", e);
-        } finally
+        }
+        finally
         {
             if (urlConnection != null)
             {
