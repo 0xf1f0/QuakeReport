@@ -241,5 +241,4 @@ public final class QueryUtils
         }
         return output.toString();
     }
-
 }
