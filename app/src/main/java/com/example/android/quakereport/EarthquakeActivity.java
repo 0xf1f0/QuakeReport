@@ -141,9 +141,6 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     @Override
     public void onLoadFinished(Loader<List<Earthquake>> loader, List<Earthquake> earthquakes)
     {
-        //Clear the adapter of previous earthquake data
-        mAdapter.clear();
-
         Log.i(LOG_TAG, "-> Calling: onLoadFinished");
         // If there is earthquake, do nothing
         if (earthquakes != null && !earthquakes.isEmpty())
@@ -154,6 +151,8 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
             if (progressBar != null && !mAdapter.isEmpty())
                 progressBar.setVisibility(View.GONE);
         }
+
+        Log.i(LOG_TAG, "-> Calling: mAdapter is empty: " + mAdapter.isEmpty());
     }
 
     @Override
@@ -185,7 +184,6 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         //Check for internet connectivity
         if (getDeviceHasInternet())
         {
-            //Initialize the LoaderManager
             LoaderManager listLoader = getLoaderManager();
             listLoader.initLoader(LOADER_ID, null, this);
         } else
@@ -193,6 +191,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
             //Display the empty state only when connectivity is false and
             //Loader Manager has not been initialized
             displayEmptyState();
+
         }
         //Update swipe refresh status
         swipeRefreshLayout.setRefreshing(false);
@@ -204,8 +203,10 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         Log.i(LOG_TAG, "-> Calling: displayEmptyState");
         //Hide the progress bar from view
         progressBar.setVisibility(View.GONE);
+
+        //Clear the adapter of previous earthquake data
+        mAdapter.clear();
         //Set the text in the empty state Text_View at the first load
         emptyStateTextView.setText(R.string.no_internet_connection);
-
     }
 }
