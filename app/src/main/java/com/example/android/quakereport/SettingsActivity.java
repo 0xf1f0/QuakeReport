@@ -43,6 +43,9 @@ public class SettingsActivity extends AppCompatActivity
             return true;
         }
 
+        /*
+            Helper method to set the current Earthquake PreferenceFragment instance as the listener on each preference
+         */
         private void bindPreferenceSummaryToValue(Preference preference)
         {
             preference.setOnPreferenceChangeListener(this);
