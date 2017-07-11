@@ -52,7 +52,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     private Boolean deviceHasInternet;
     public static final String LOG_TAG = EarthquakeActivity.class.getName();
 
-    final static String USGS_REQUEST_URL = "http://earthquake.usgs.gov/fdsnws/event/1/query";
+    final static String USGS_REQUEST_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -139,14 +139,23 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         Log.i(LOG_TAG, "-> Calling: onCreateLoader");
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String minMagnitude = sharedPreferences.getString(getString(R.string.settings_min_magnitude_key), getString(R.string.settings_min_magnitude_default));
+        String minMagnitude = sharedPreferences.getString(getString(R.string
+                .settings_min_magnitude_key), getString(R.string.settings_min_magnitude_default));
+
+        /*
+            Look up the user’s preferred sort order when we build the URI for making the HTTP
+            request
+         */
+        String orderBy = sharedPreferences.getString(getString(R.string.settings_order_by_key),
+                getString(R.string.settings_order_by_default));
+
         Uri baseUri = Uri.parse(USGS_REQUEST_URL);
         Uri.Builder uriBuilder = baseUri.buildUpon();
 
         uriBuilder.appendQueryParameter("format", "geojson");
         uriBuilder.appendQueryParameter("limit", "10");
         uriBuilder.appendQueryParameter("minmag", minMagnitude);
-        uriBuilder.appendQueryParameter("orderby", "time");
+        uriBuilder.appendQueryParameter("orderby", orderBy);
 
         return new EarthquakeLoader(this, uriBuilder.toString());
     }
@@ -162,7 +171,16 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
 
             //Hide the progress bar from view once there are earthquake data to be displayed
             if (progressBar != null && !mAdapter.isEmpty())
+            {
                 progressBar.setVisibility(View.GONE);
+            }
+
+            //Disable swipe refresh while progress bar is shown
+            if(progressBar != null && progressBar.isShown())
+            {
+                swipeRefreshLayout.setEnabled(false);
+            }
+
         }
 
         Log.i(LOG_TAG, "-> Calling: mAdapter is empty: " + mAdapter.isEmpty());
@@ -208,7 +226,6 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         }
         //Update swipe refresh status
         swipeRefreshLayout.setRefreshing(false);
-
     }
 
     private void displayEmptyState()
@@ -238,7 +255,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     public boolean onOptionsItemSelected(MenuItem item)
     {
         int id = item.getItemId();
-        if(id == R.id.action_settings)
+        if (id == R.id.action_settings)
         {
             //Create a new intent for the settings activity
             Intent settingsIntent = new Intent(this, SettingsActivity.class);
