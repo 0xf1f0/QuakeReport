@@ -176,11 +176,19 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
             }
 
             //Disable swipe refresh while progress bar is shown
-            if(progressBar != null && progressBar.isShown())
+            if (progressBar != null && progressBar.isActivated())
             {
                 swipeRefreshLayout.setEnabled(false);
             }
 
+        }
+        /*  A case where the url did not return earthquake data due to invalid minimum magnitude
+            from user
+        */
+        else
+        {
+            progressBar.setVisibility(View.GONE);
+            emptyStateTextView.setText(R.string.high_minimum_magnitude);
         }
 
         Log.i(LOG_TAG, "-> Calling: mAdapter is empty: " + mAdapter.isEmpty());

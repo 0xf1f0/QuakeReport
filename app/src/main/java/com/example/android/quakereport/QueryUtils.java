@@ -87,6 +87,7 @@ public final class QueryUtils
             Log.e(LOG_TAG, "Error closing input stream", e);
         }
 
+
         // Extract relevant fields from the JSON response and create an
         // {@link ArrayList<Earthquake> } object
 

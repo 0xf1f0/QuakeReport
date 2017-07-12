@@ -53,7 +53,11 @@ public class EarthquakeLoader extends AsyncTaskLoader<List<Earthquake>>
             /* Perform the HTTP request for earthquake data and process the response. */
             earthquakes = QueryUtils.fetchEarthquakeData(mUrl);
 
-        } catch (SecurityException e)
+        }
+        /*
+            In case internet permission is not added to AndroidManifest.xml
+         */
+        catch (SecurityException e)
         {
             Log.e(LOG_TAG, e.getMessage(), e);
         }
